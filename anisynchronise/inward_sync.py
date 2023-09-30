@@ -1,7 +1,7 @@
 # functions dealing with inward sync operation
 
-from os.path import isfile
-from os import listdir
+from os.path import isfile,dirname
+from os import listdir,makedirs
 from loguru import logger
 
 from anisynchronise.anilog import readToSeperator
@@ -34,6 +34,8 @@ def genClientSyncToFile(
     """generate client sync and output to json file. output file name needs extension"""
 
     clientSync:ClientNodeUpdate=genClientSyncUpdate(vidDir,anilogFile)
+
+    makedirs(dirname(outputFile),exist_ok=True)
 
     logger.info("writing client sync to {}",outputFile)
     with open(outputFile,"w") as wfile:
