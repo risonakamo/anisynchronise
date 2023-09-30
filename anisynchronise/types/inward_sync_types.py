@@ -1,13 +1,13 @@
 # typings used during inward sync process
 
 from pydantic import BaseModel
-from anisynchronise.types.ani_log_types import LogItem
+from anisynchronise.types.ani_log_types import Anilog, LogItem
 
 class ClientNodeUpdate(BaseModel):
     """sync state from a client node to be sent to collector node. includes information
     about the client node"""
 
-    logUpdate:list[LogItem]
+    logUpdate:Anilog
     """all log updates from the client from the last seperator"""
 
     vidState:list[str]
