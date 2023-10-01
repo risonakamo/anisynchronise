@@ -11,6 +11,7 @@ pydantic = "^2.4.2"
 loguru = "^0.7.2"
 devtools = "^0.12.2"
 pyyaml = "^6.0.1"
+pytest = "^7.4.2"
 
 
 [build-system]

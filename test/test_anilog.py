@@ -13,7 +13,7 @@ def test_readToSeperator():
 
     success: should see a number of items printed out from the log"""
 
-    log:Anilog=readToSeperator(join(HERE,"test-anilog.log"))
+    log:Anilog=readToSeperator(join(HERE,"log1.log"))
     debug(log)
 
 def test_writeToLog():
