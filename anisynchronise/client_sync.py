@@ -1,4 +1,4 @@
-# functions dealing with inward sync operation
+# functions dealing with client sync operation
 
 from os.path import isfile,dirname
 from os import listdir,makedirs

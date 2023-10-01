@@ -1,6 +1,6 @@
 from os.path import join,dirname,realpath
 
-from anisynchronise.inward_sync import genClientSyncToFile
+from anisynchronise.client_sync import genClientSyncToFile
 
 HERE:str=dirname(realpath(__file__))
 
