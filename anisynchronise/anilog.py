@@ -9,22 +9,22 @@ from anisynchronise.types.ani_log_types import Anilog, LogItem
 def readToSeperator(anilogFile:str)->Anilog:
     """read anilog file, return items only to the first found seperator"""
 
-    log:Anilog=[]
+    return readAnilog(anilogFile,True)
 
-    with open(anilogFile,"r") as rfile:
-        while True:
-            line:str=rfile.readline()
+def addToLog(anilogFile:str,items:Anilog,output:str|None=None)->None:
+    """append the given items to the start of the anilog. give output to specify new output file, or none
+    to overwrite"""
 
-            if matchSeperator(line):
-                logger.info("finish reading anilog to seperator: {} items",len(log))
-                return log
+    anilog:Anilog=readAnilog(anilogFile)
 
-            if not line:
-                logger.warning("reached end of anilog file without finding seperator")
-                return log
+    logger.info("adding {} items to log",len(items))
 
-            log.append(parseAnilogLine(line))
+    anilog=items+anilog
 
+    if not output:
+        output=anilogFile
+
+    writeAnilog(anilog,output)
 
 
 
@@ -56,3 +56,41 @@ def matchSeperator(text:str)->bool:
 
     # regex true if text has 3 dashes in a row anywhere in it
     return bool(search("---",text))
+
+def logItemToText(item:LogItem)->str:
+    """convert log item to text"""
+
+    return f"{item.date} {item.filename}"
+
+def writeAnilog(anilog:Anilog,outputFile:str)->None:
+    """write given anilog to target file. filename needs extension"""
+
+    text:str=""
+
+    for item in anilog:
+        item:LogItem
+
+        text+=logItemToText(item)+"\n"
+
+    logger.info("writing to anilog: {}",outputFile)
+    with open(outputFile,"w") as wfile:
+        wfile.write(text)
+
+def readAnilog(anilogFile:str,stopAtSeperator:bool=False)->Anilog:
+    """read anilog file"""
+
+    log:Anilog=[]
+
+    with open(anilogFile,"r") as rfile:
+        while True:
+            line:str=rfile.readline()
+
+            if stopAtSeperator and matchSeperator(line):
+                logger.info("finish reading anilog to seperator: {} items",len(log))
+                return log
+
+            if not line:
+                logger.info("read whole anilog file")
+                return log
+
+            log.append(parseAnilogLine(line))
