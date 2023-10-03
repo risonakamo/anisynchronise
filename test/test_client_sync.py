@@ -10,7 +10,10 @@ def test_syncToFile():
     """test generating update.json sync file"""
 
     genClientSyncToFile(
-        vidDir=r"E:\videos\vids",
-        anilogFile=join(HERE,"test-anilog.log"),
+        vidDir=r"D:\videos\vids",
+        anilogFile=r"D:\videos\vids.log",
         outputFile=join(HERE,"output/update.json")
     )
+
+if __name__=="__main__":
+    test_syncToFile()
