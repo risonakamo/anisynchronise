@@ -11,7 +11,11 @@ def readToSeperator(anilogFile:str)->Anilog:
 
     return readAnilog(anilogFile,True)
 
-def addToLog(anilogFile:str,items:Anilog,output:str|None=None)->None:
+def addToLog(
+    anilogFile:str,
+    items:Anilog,
+    output:str|None=None
+)->None:
     """append the given items to the start of the anilog. give output to specify new output file, or none
     to overwrite"""
 
