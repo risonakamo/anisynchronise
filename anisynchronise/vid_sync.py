@@ -1,6 +1,8 @@
 # functions dealing with syncing vid folders
 
 from loguru import logger
+from os.path import join
+from shutil import move
 
 from anisynchronise.types.ani_log_types import Anilog
 
@@ -62,3 +64,29 @@ def checkCollectorSync(
         printr(f"- {vid}")
 
     return True
+
+def doCollectorVidSync(
+    collectorVidsDir:str,
+    stockDir:str,
+    deleteDir:str,
+    workspaceDir:str,
+
+    removeVids:list[str]
+)->None:
+    """do vids sync portion of collector sync
+
+    removeVids should be list of filenames only
+
+    1. removes specified remove vids from collector vids dir, moving them into the deleteDir
+    2. moves all vids from stock to collector vids dir. empties the stock dir
+    3. mirrors all collector vids to workspace dir, replacing whatever was there originally"""
+
+    logger.info("removing items from collector vids...")
+    for removeVid in removeVids:
+        removeVid:str
+
+        printr(f"removing {removeVid}")
+        move(
+            join(collectorVidsDir,removeVid),
+            join(deleteDir,removeVid)
+        )
