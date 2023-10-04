@@ -1,5 +1,6 @@
 from yaml import safe_load
 
+
 from pydantic import BaseModel
 from typing import Literal, TypeAlias
 

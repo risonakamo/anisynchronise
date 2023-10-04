@@ -55,4 +55,10 @@ def checkCollectorSync(
 
         return False
 
+    logger.info("client sync confirmed")
+    logger.info("the following videos will be removed:")
+
+    for vid in removeVids:
+        printr(f"- {vid}")
+
     return True
