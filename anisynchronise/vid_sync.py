@@ -3,6 +3,7 @@
 from loguru import logger
 from os.path import join
 from shutil import move
+from anisynchronise.robocopy import mirrorCopy, roboMoveInsideDir
 
 from anisynchronise.types.ani_log_types import Anilog
 
@@ -79,8 +80,9 @@ def doCollectorVidSync(
 
     1. removes specified remove vids from collector vids dir, moving them into the deleteDir
     2. moves all vids from stock to collector vids dir. empties the stock dir
-    3. mirrors all collector vids to workspace dir, replacing whatever was there originally"""
+    3. mirrors all collector vids to workspace dir vids, replacing whatever was there originally"""
 
+    # 1. removing all removeVids from collector vids
     logger.info("removing items from collector vids...")
     for removeVid in removeVids:
         removeVid:str
@@ -90,3 +92,19 @@ def doCollectorVidSync(
             join(collectorVidsDir,removeVid),
             join(deleteDir,removeVid)
         )
+
+
+    # 2. moving all items from stockdir into the collector vids dir
+    logger.info("moving items from stock dir...")
+    roboMoveInsideDir(
+        stockDir,
+        collectorVidsDir
+    )
+
+
+    # 3. mirroring to workspace dir
+    logger.info("mirroring to workspace videos dir")
+    mirrorCopy(
+        collectorVidsDir,
+        join(workspaceDir,"videos")
+    )
