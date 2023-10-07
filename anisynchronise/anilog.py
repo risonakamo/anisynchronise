@@ -30,6 +30,14 @@ def addToLog(
 
     writeAnilog(anilog,output)
 
+def anilogAsFilenames(anilog:Anilog)->list[str]:
+    """convert anilog into simple list of file names of items in the log"""
+
+    return [
+        item.filename
+        for item in anilog
+    ]
+
 
 
 

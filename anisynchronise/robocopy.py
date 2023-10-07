@@ -3,6 +3,7 @@
 from os import listdir
 from os.path import join,isdir
 from subprocess import CompletedProcess, run
+from devtools import debug
 
 from loguru import logger
 
@@ -66,7 +67,10 @@ def roboMoveInsideDir(src:str,dest:str)->None:
     for item in items:
         item:str
 
-        roboMove(join(src,item),join(dest,item))
+        roboMove(
+            join(src,item),
+            join(dest,item)
+        )
 
 def robocopySuccess(returnCode:int)->bool:
     """return if code is good robocopy return code"""
