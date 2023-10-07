@@ -1,6 +1,7 @@
 # top level of collector sync. contains main function for doing collector sync
 
 from os import listdir
+from os.path import join
 from loguru import logger
 
 from anisynchronise.anilog import addToLog, anilogAsFilenames
@@ -39,7 +40,7 @@ def doCollectorSync(
         logger.error("failed collector sync check")
         raise Exception("failed collector sync check")
 
-    # 2./3./4. do video sync
+    # 2.,3.,4. do video sync
     logger.info("performing collector sync")
     doCollectorVidSync(
         collectorVidsDir=collectorVidsDir,
@@ -56,5 +57,9 @@ def doCollectorSync(
         anilogFile=collectorAnilogFile,
         items=clientsync.logUpdate,
     )
+
+    # 6. create drop ready file
+    with open(join(workspaceDir,"videos-available.txt"),"w"):
+        pass
 
     logger.info("collector sync successful")

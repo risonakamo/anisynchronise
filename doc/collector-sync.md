@@ -21,3 +21,4 @@ what it does:
 3. moves all vids from **stock** to the **videos dir**. this **empties out the stock dir completely**, so make sure the stock dir only has things that should be moved
 4. mirrors all videos from the newly updated **videos dir** to the **workspace videos dir**. this **wipes out the workspace videos dir**, so make sure nothing needed is in there
 5. updates the **collector anilog** with all the items that were removed the videos dir, essentially, updating the log with all the items reported by the client
+6. create empty file in workspace location to signal client that it needs to mirror new videos to its folder
