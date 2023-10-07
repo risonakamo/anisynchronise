@@ -4,8 +4,10 @@ from os import listdir
 from os.path import join,isdir
 from subprocess import CompletedProcess, run
 from devtools import debug
+from typing_extensions import deprecated
 
 from loguru import logger
+
 
 def mirrorCopy(src:str,dest:str)->None:
     """mirror copy the src to the dest. the dest will be completely overwritten by the src"""
@@ -29,7 +31,46 @@ def mirrorCopy(src:str,dest:str)->None:
     logger.error("robocopy returned error code {}",result.returncode)
     raise Exception("robocopy failed")
 
-def roboMove(src:str,dest:str)->None:
+def robomoveFiles(
+    srcdir:str,
+    destdir:str,
+    files:list[str]
+)->None:
+    """move target files, which all must be in the src dir, to another dir. leaves the
+    src dir completely empty"""
+
+    logger.info("robomoving files")
+    result:CompletedProcess=run(
+        [
+            "robocopy",
+            "/move",
+            srcdir,
+            destdir,
+            *files
+        ]
+    )
+
+    if not robocopySuccess(result.returncode):
+        logger.error("failed to robomove files")
+        raise Exception("robomove failed")
+
+    logger.info("clearing src dir")
+    run(
+        [
+            "del",
+            "/q",
+            join(srcdir,"*.*")
+        ],
+        shell=True,
+        check=True
+    )
+
+
+
+
+# --- private ---
+@deprecated("replaced by robomove files")
+def dep_roboMove(src:str,dest:str)->None:
     """move target location to another. if used on directories, removes the original directory"""
 
     logger.info("robo moving")
@@ -50,7 +91,8 @@ def roboMove(src:str,dest:str)->None:
     logger.error("robocopy failed to do move")
     raise Exception("robocopy move failed")
 
-def roboMoveInsideDir(src:str,dest:str)->None:
+@deprecated("replaced by robomove files")
+def dep_roboMoveInsideDir(src:str,dest:str)->None:
     """move all items inside of src to dest using robomove. used to move all items inside of a dir
     without deleting the dir (which normal robomove would do)"""
 
@@ -67,7 +109,7 @@ def roboMoveInsideDir(src:str,dest:str)->None:
     for item in items:
         item:str
 
-        roboMove(
+        dep_roboMove(
             join(src,item),
             join(dest,item)
         )
