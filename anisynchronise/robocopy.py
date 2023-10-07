@@ -1,7 +1,7 @@
 # functions for performing robocopy operations
 
 from os import listdir
-from os.path import join,isdir
+from os.path import join,isdir,normpath
 from subprocess import CompletedProcess, run
 from devtools import debug
 from typing_extensions import deprecated
@@ -34,10 +34,13 @@ def mirrorCopy(src:str,dest:str)->None:
 def robomoveFiles(
     srcdir:str,
     destdir:str,
-    files:list[str]
+    files:list[str]|None=None
 )->None:
     """move target files, which all must be in the src dir, to another dir. leaves the
-    src dir completely empty"""
+    src dir completely empty. if give no file list, scans the dir for file list"""
+
+    if not files:
+        files=listdir(srcdir)
 
     logger.info("robomoving files")
     result:CompletedProcess=run(
@@ -54,16 +57,16 @@ def robomoveFiles(
         logger.error("failed to robomove files")
         raise Exception("robomove failed")
 
-    logger.info("clearing src dir")
-    run(
-        [
-            "del",
-            "/q",
-            join(srcdir,"*.*")
-        ],
-        shell=True,
-        check=True
-    )
+    # logger.info("clearing src dir")
+    # run(
+    #     [
+    #         "del",
+    #         "/q",
+    #         normpath(join(srcdir,"*.*"))
+    #     ],
+    #     shell=True,
+    #     check=True
+    # )
 
 
 

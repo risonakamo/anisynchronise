@@ -3,7 +3,7 @@
 from loguru import logger
 from os.path import join
 from shutil import move
-from anisynchronise.robocopy import mirrorCopy, roboMoveInsideDir
+from anisynchronise.robocopy import mirrorCopy,robomoveFiles
 
 from anisynchronise.types.ani_log_types import Anilog
 
@@ -96,9 +96,9 @@ def doCollectorVidSync(
 
     # 2. moving all items from stockdir into the collector vids dir
     logger.info("moving items from stock dir...")
-    roboMoveInsideDir(
-        stockDir,
-        collectorVidsDir
+    robomoveFiles(
+        srcdir=stockDir,
+        destdir=collectorVidsDir
     )
 
 
