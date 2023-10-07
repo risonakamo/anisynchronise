@@ -1,9 +1,8 @@
 # functions for performing robocopy operations
 
 from os import listdir
-from os.path import join,isdir,normpath
+from os.path import join,isdir,normpath,isfile
 from subprocess import CompletedProcess, run
-from devtools import debug
 from typing_extensions import deprecated
 
 from loguru import logger
@@ -46,7 +45,6 @@ def robomoveFiles(
     result:CompletedProcess=run(
         [
             "robocopy",
-            "/move",
             srcdir,
             destdir,
             *files
@@ -57,16 +55,10 @@ def robomoveFiles(
         logger.error("failed to robomove files")
         raise Exception("robomove failed")
 
-    # logger.info("clearing src dir")
-    # run(
-    #     [
-    #         "del",
-    #         "/q",
-    #         normpath(join(srcdir,"*.*"))
-    #     ],
-    #     shell=True,
-    #     check=True
-    # )
+    logger.info("clearing src dir")
+    clearDirectoryFiles(srcdir)
+
+
 
 
 
@@ -121,3 +113,25 @@ def robocopySuccess(returnCode:int)->bool:
     """return if code is good robocopy return code"""
 
     return returnCode<=8
+
+def clearDirectoryFiles(dir:str)->None:
+    """delete all files in a target dir, but do not recurse and keep all extra folders"""
+
+    items:list[str]=listdir(dir)
+
+    for item in items:
+        item:str
+        itempath:str=normpath(join(dir,item))
+
+        logger.info("deleting {}",item)
+
+        if isfile(itempath):
+            run(
+                [
+                    "del",
+                    "/q",
+                    itempath
+                ],
+                check=True,
+                shell=True
+            )

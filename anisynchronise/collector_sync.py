@@ -56,3 +56,5 @@ def doCollectorSync(
         anilogFile=collectorAnilogFile,
         items=clientsync.logUpdate,
     )
+
+    logger.info("collector sync successful")
