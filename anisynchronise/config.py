@@ -1,24 +1,23 @@
+#  functions for loading config files
+
+from loguru import logger
 from yaml import safe_load
 
+from anisynchronise.types.config_types import ClientConfig, CollectorConfig
 
-from pydantic import BaseModel
-from typing import Literal, TypeAlias
 
-SystemType:TypeAlias=Literal["client","collector"]
-"""what the system should be considered as"""
-
-class AnisyncConfig(BaseModel):
-    vidsDir:str
-    anilogFile:str
-
-    syncDir:str
-    """remote directory used as workspace for inter-system operations. should probably be
-    in an external drive"""
-
-    systemType:SystemType
-
-def loadConfig(path:str)->AnisyncConfig:
-    """load anisync config"""
+def loadConfig(path:str)->CollectorConfig|ClientConfig:
+    """load config. can be collector or client"""
 
     with open(path,"r") as rfile:
-        return AnisyncConfig.model_validate(safe_load(rfile))
+        data=safe_load(rfile)
+
+        if data["systemType"]=="collector":
+            return CollectorConfig.model_validate(data)
+
+        elif data["systemType"]=="client":
+            return ClientConfig.model_validate(data)
+
+        else:
+            logger.error("failed to parse config")
+            raise Exception("unknown config")

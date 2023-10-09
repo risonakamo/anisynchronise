@@ -1,0 +1,9 @@
+systemType: client
+
+# !! IMPORTANT: this folder will be mirror copied. make sure it does not contain important files!!
+clientVideosDir: somewhere
+videosDeleteDir: somewhere
+
+workspaceDir: somewhere
+
+clientAnilogFile: somewhere

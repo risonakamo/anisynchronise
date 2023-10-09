@@ -1,0 +1,16 @@
+systemType: collector
+
+# folder where videos are stored
+collectorVideosDir: E:\videos\vids
+# folder where stock videos are stored
+stockVideosDir: C:\Users\ktkm\Desktop\stock
+# folder where deleted videos will be moved
+videosDeleteDir: E:\videos\completed
+
+# external drive folder to be used for transfer operations
+# a folder named "videos" in this folder will be mirrored!! make sure it doesn't contain
+# anything important!!
+workspaceDir: G:\anisync-transfer
+
+# path to collector anilog file
+collectorAnilogFile: C:\Users\ktkm\Desktop\webpages\anirandomise backups\randomise.log
