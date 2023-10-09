@@ -35,7 +35,7 @@ def checkCollectorSync(
 
     if len(missingCollectorVids):
         logger.error("attempted to remove videos, but missing videos from collector dir")
-        print("missing the following files:")
+        printr("missing the following files:")
 
         for missingvid in missingCollectorVids:
             missingvid:str
@@ -49,7 +49,7 @@ def checkCollectorSync(
 
     if len(missingCollectorVids2):
         logger.error("client has vids that collector does not")
-        print("client has the following extra files:")
+        printr("client has the following extra files:")
 
         for missingvid in missingCollectorVids2:
             missingvid:str

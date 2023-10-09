@@ -19,7 +19,7 @@ def replicateDir(src:str,dest:str)->None:
         itemPath:str=join(src,item)
 
         if not isfile(itemPath):
-            print("?")
+            logger.info("?")
             continue
 
         logger.info("replicating {}",item)
