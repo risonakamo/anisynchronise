@@ -11,22 +11,6 @@ from anisynchronise.anilog import readToSeperator
 from anisynchronise.types.ani_log_types import Anilog
 from anisynchronise.types.client_sync_types import ClientNodeUpdate
 
-
-def genClientSyncUpdate(
-    vidDir:str,
-    anilogFile:str
-)->ClientNodeUpdate:
-    """generate client node update from client node's target folders"""
-
-    vidFiles:list[str]=listdir(vidDir)
-
-    anilogUpdate:Anilog=readToSeperator(anilogFile)
-
-    return ClientNodeUpdate(
-        vidState=vidFiles,
-        logUpdate=anilogUpdate
-    )
-
 def genClientSyncToFile(
     vidDir:str,
     anilogFile:str,
@@ -47,6 +31,35 @@ def genClientSyncToFile(
     printr(f"writing client sync to [green]{outputFile}[/green]")
     with open(outputFile,"w") as wfile:
         wfile.write(clientSync.model_dump_json())
+
+def clientSyncFromCollector():
+    """perform phase 3 sync, syncing collector's new items into the client.
+    checks for existence of "videos-available.txt", and if exists:
+
+    1. mirrors videos from workspace into client vids dir, completely replacing all vids in
+    client vids dir
+    2. removes videos-available.txt, preventing client sync from collector again
+    3. modifies client's anilog file, removing all seperators. adds a new seperator at the top of the
+    file"""
+
+    pass
+
+
+# ---- private ----
+def genClientSyncUpdate(
+    vidDir:str,
+    anilogFile:str
+)->ClientNodeUpdate:
+    """generate client node update from client node's target folders"""
+
+    vidFiles:list[str]=listdir(vidDir)
+
+    anilogUpdate:Anilog=readToSeperator(anilogFile)
+
+    return ClientNodeUpdate(
+        vidState=vidFiles,
+        logUpdate=anilogUpdate
+    )
 
 def readClientSync(file:str)->ClientNodeUpdate:
     """read client sync json file"""
