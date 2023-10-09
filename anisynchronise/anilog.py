@@ -2,6 +2,7 @@
 
 from re import Match, match,search
 from loguru import logger
+from rich import print as printr
 
 from anisynchronise.types.ani_log_types import Anilog, LogItem
 
@@ -21,7 +22,7 @@ def addToLog(
 
     anilog:Anilog=readAnilog(anilogFile)
 
-    logger.info("adding {} items to log",len(items))
+    printr(f"adding {len(items)} items to log")
 
     anilog=items+anilog
 
@@ -84,7 +85,7 @@ def writeAnilog(anilog:Anilog,outputFile:str)->None:
 
         text+=logItemToText(item)+"\n"
 
-    logger.info("writing to anilog: {}",outputFile)
+    printr(f"writing to anilog: [green]{outputFile}[/green]")
     with open(outputFile,"w") as wfile:
         wfile.write(text)
 
@@ -98,11 +99,11 @@ def readAnilog(anilogFile:str,stopAtSeperator:bool=False)->Anilog:
             line:str=rfile.readline()
 
             if stopAtSeperator and matchSeperator(line):
-                logger.info("finish reading anilog to seperator: {} items",len(log))
+                logger.debug("finish reading anilog to seperator: {} items",len(log))
                 return log
 
             if not line:
-                logger.info("read whole anilog file")
+                logger.debug("read whole anilog file")
                 return log
 
             log.append(parseAnilogLine(line))

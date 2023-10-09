@@ -4,6 +4,7 @@ from os import listdir
 from os.path import join,isdir,normpath,isfile
 from subprocess import CompletedProcess, run
 from typing_extensions import deprecated
+from pprint import pprint
 
 from loguru import logger
 
@@ -11,7 +12,6 @@ from loguru import logger
 def mirrorCopy(src:str,dest:str)->None:
     """mirror copy the src to the dest. the dest will be completely overwritten by the src"""
 
-    logger.info("mirror copying")
     result:CompletedProcess=run(
         [
             "robocopy",
@@ -19,15 +19,20 @@ def mirrorCopy(src:str,dest:str)->None:
             src,
             dest
         ],
-        shell=True
+        shell=True,
+        capture_output=True
     )
 
     # error less than 8 is sucess for robocopy for some reason...
     if robocopySuccess(result.returncode):
-        logger.info("mirror copy success")
         return
 
     logger.error("robocopy returned error code {}",result.returncode)
+
+    logger.error("robocopy output:")
+    pprint(result.stdout)
+    pprint(result.stderr)
+
     raise Exception("robocopy failed")
 
 def robomoveFiles(
@@ -41,21 +46,20 @@ def robomoveFiles(
     if not files:
         files=listdir(srcdir)
 
-    logger.info("robomoving files")
     result:CompletedProcess=run(
         [
             "robocopy",
             srcdir,
             destdir,
             *files
-        ]
+        ],
+        capture_output=True
     )
 
     if not robocopySuccess(result.returncode):
         logger.error("failed to robomove files")
         raise Exception("robomove failed")
 
-    logger.info("clearing src dir")
     clearDirectoryFiles(srcdir)
 
 
@@ -68,7 +72,6 @@ def robomoveFiles(
 def dep_roboMove(src:str,dest:str)->None:
     """move target location to another. if used on directories, removes the original directory"""
 
-    logger.info("robo moving")
     result:CompletedProcess=run(
         [
             "robocopy",
@@ -76,11 +79,11 @@ def dep_roboMove(src:str,dest:str)->None:
             src,
             dest
         ],
-        shell=True
+        shell=True,
+        capture_output=True
     )
 
     if robocopySuccess(result.returncode):
-        logger.info("robo move success")
         return
 
     logger.error("robocopy failed to do move")
@@ -123,7 +126,7 @@ def clearDirectoryFiles(dir:str)->None:
         item:str
         itempath:str=normpath(join(dir,item))
 
-        logger.info("deleting {}",item)
+        logger.debug("deleting {}",item)
 
         if isfile(itempath):
             run(

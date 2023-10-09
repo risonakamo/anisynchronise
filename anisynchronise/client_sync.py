@@ -4,6 +4,7 @@ from os.path import isfile,dirname
 from os import listdir,makedirs
 from loguru import logger
 from json import load
+from rich import print as printr
 
 from anisynchronise.anilog import readToSeperator
 
@@ -34,11 +35,16 @@ def genClientSyncToFile(
 )->None:
     """generate client sync and output to json file. output file name needs extension"""
 
+    printr("[magenta]Generating Client Sync File[/magenta]")
+    printr(f"- Videos Dir: [cyan]{vidDir}[/cyan]")
+    printr(f"- Anilog File: [cyan]{anilogFile}[/cyan]")
+    printr()
+
     clientSync:ClientNodeUpdate=genClientSyncUpdate(vidDir,anilogFile)
 
     makedirs(dirname(outputFile),exist_ok=True)
 
-    logger.info("writing client sync to {}",outputFile)
+    printr(f"writing client sync to [green]{outputFile}[/green]")
     with open(outputFile,"w") as wfile:
         wfile.write(clientSync.model_dump_json())
 

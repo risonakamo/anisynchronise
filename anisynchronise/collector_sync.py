@@ -3,6 +3,7 @@
 from os import listdir
 from os.path import join
 from loguru import logger
+from rich import print as printr
 
 from anisynchronise.anilog import addToLog, anilogAsFilenames
 from anisynchronise.client_sync import readClientSync
@@ -23,15 +24,18 @@ def doCollectorSync(
     """collector sync. see collector-sync.md for info about collector sync operation.
     requires all the items specified by the docs"""
 
+    printr(f"[magenta]Performing Collector Sync[/magenta]")
+
     # 1. reading from client sync json
-    logger.info("reading from client sync json")
+    printr(f"Found Client Sync Json: [green]{clientSyncJson}[/green]")
+    printr()
     clientsync:ClientNodeUpdate=readClientSync(clientSyncJson)
 
     collectorVidsList:list[str]=listdir(collectorVidsDir)
 
     removeVidsList:list[str]=anilogAsFilenames(clientsync.logUpdate)
 
-    logger.info("confirming collector sync operation correctness")
+    printr("confirming collector sync operation correctness...")
     if not checkCollectorSync(
         collectorVids=collectorVidsList,
         removeVids=removeVidsList,
@@ -40,8 +44,10 @@ def doCollectorSync(
         logger.error("failed collector sync check")
         raise Exception("failed collector sync check")
 
+
     # 2.,3.,4. do video sync
-    logger.info("performing collector sync")
+    printr()
+    printr("[cyan]Performing Mirroring...[/cyan]")
     doCollectorVidSync(
         collectorVidsDir=collectorVidsDir,
         stockDir=stockDir,
@@ -52,7 +58,8 @@ def doCollectorSync(
     )
 
     # 5. update collector anilog file
-    logger.info("updating collector anilog")
+    printr()
+    printr("[cyan]Updating Collector Anilog...[/cyan]")
     addToLog(
         anilogFile=collectorAnilogFile,
         items=clientsync.logUpdate,
@@ -62,4 +69,5 @@ def doCollectorSync(
     with open(join(workspaceDir,"videos-available.txt"),"w"):
         pass
 
-    logger.info("collector sync successful")
+    printr()
+    printr("[bold blue]collector sync successful[/bold blue]")

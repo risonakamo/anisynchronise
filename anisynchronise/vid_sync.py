@@ -3,11 +3,11 @@
 from loguru import logger
 from os.path import join
 from shutil import move
+from rich import print as printr
+
 from anisynchronise.robocopy import mirrorCopy,robomoveFiles
 
 from anisynchronise.types.ani_log_types import Anilog
-
-printr=print
 
 def checkCollectorSync(
     collectorVids:list[str],
@@ -58,8 +58,9 @@ def checkCollectorSync(
 
         return False
 
-    logger.info("client sync confirmed")
-    logger.info("the following videos will be removed:")
+    printr("[green]client sync confirmed[/green]")
+    printr()
+    printr("[yellow]the following videos will be removed from collector videos dir:[/yellow]")
 
     for vid in removeVids:
         printr(f"- {vid}")
@@ -83,11 +84,11 @@ def doCollectorVidSync(
     3. mirrors all collector vids to workspace dir vids, replacing whatever was there originally"""
 
     # 1. removing all removeVids from collector vids
-    logger.info("removing items from collector vids...")
+    printr(f"[1/3] removing {len(removeVids)} items from collector vids...")
     for removeVid in removeVids:
         removeVid:str
 
-        printr(f"removing {removeVid}")
+        logger.debug(f"removing {removeVid}")
         move(
             join(collectorVidsDir,removeVid),
             join(deleteDir,removeVid)
@@ -95,7 +96,7 @@ def doCollectorVidSync(
 
 
     # 2. moving all items from stockdir into the collector vids dir
-    logger.info("moving items from stock dir...")
+    printr("[2/3] moving items from stock dir...")
     robomoveFiles(
         srcdir=stockDir,
         destdir=collectorVidsDir
@@ -103,7 +104,7 @@ def doCollectorVidSync(
 
 
     # 3. mirroring to workspace dir
-    logger.info("mirroring to workspace videos dir")
+    printr("[3/3] mirroring to workspace videos dir...")
     mirrorCopy(
         collectorVidsDir,
         join(workspaceDir,"videos")
