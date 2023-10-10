@@ -1,12 +1,13 @@
 # functions dealing with client sync operation
 
-from os.path import isfile,dirname
-from os import listdir,makedirs
+from os.path import isfile,dirname,join,isdir
+from os import listdir,makedirs, remove
 from loguru import logger
 from json import load
 from rich import print as printr
 
-from anisynchronise.anilog import readToSeperator
+from anisynchronise.anilog import readToSeperator, resetSeperator
+from anisynchronise.robocopy import mirrorCopy
 
 from anisynchronise.types.ani_log_types import Anilog
 from anisynchronise.types.client_sync_types import ClientNodeUpdate
@@ -32,17 +33,49 @@ def genClientSyncToFile(
     with open(outputFile,"w") as wfile:
         wfile.write(clientSync.model_dump_json())
 
-def clientSyncFromCollector():
+def clientSyncFromCollector(
+    workspaceDir:str,
+    videosDir:str,
+    anilogFile:str
+)->None:
     """perform phase 3 sync, syncing collector's new items into the client.
-    checks for existence of "videos-available.txt", and if exists:
+    only works if videos-available.txt exists in the workspace dir
 
-    1. mirrors videos from workspace into client vids dir, completely replacing all vids in
-    client vids dir
-    2. removes videos-available.txt, preventing client sync from collector again
-    3. modifies client's anilog file, removing all seperators. adds a new seperator at the top of the
-    file"""
+    see client-sync.md, phase 3 client sync for operations performed"""
 
-    pass
+    printr("[magenta]Client Sync Phase 3[/magenta]")
+
+    # confirming videos are available
+    videosAvailFile:str=join(workspaceDir,"videos-available.txt")
+    if not isfile(videosAvailFile):
+        printr(
+            "[bold red]ERROR: Could not find videos-available.txt "
+            +"in workspace dir, refusing to do phase 3 sync[/bold red]"
+        )
+        raise Exception("missing videos available")
+
+    # 1. mirroring workspace videos into client vids dir
+    printr("mirroring into videos dir...")
+    workspaceVidsDir:str=join(workspaceDir,"videos")
+
+    if not isdir(workspaceVidsDir):
+        printr("[bold red]ERROR: Missing workspace vids dir[/bold red]")
+        raise Exception("missing workspace vids dir")
+
+    mirrorCopy(
+        src=workspaceVidsDir,
+        dest=videosDir
+    )
+
+    # 2. edit anilog file to remove all seperators and replace one at the top
+    printr("resetting anilog file seperators...")
+    resetSeperator(anilogFile)
+
+    # 3. delete the videos available file
+    printr("deleting videos-available.txt")
+    remove(videosAvailFile)
+
+    printr("[green]client sync phase 3 complete[/green]")
 
 
 # ---- private ----

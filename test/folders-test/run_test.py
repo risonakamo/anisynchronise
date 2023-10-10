@@ -5,7 +5,7 @@ from loguru import logger
 from sys import stdout
 
 from anisynchronise.collector_sync import doCollectorSync
-from anisynchronise.client_sync import genClientSyncToFile
+from anisynchronise.client_sync import clientSyncFromCollector, genClientSyncToFile
 
 HERE:str=dirname(realpath(__file__))
 
@@ -40,4 +40,17 @@ doCollectorSync(
     workspaceDir=join(HERE,"test-folders/workspace"),
     collectorAnilogFile=join(HERE,"test-folders/collector/collector.log"),
     clientSyncJson=join(HERE,"test-folders/workspace/client-sync.json")
+)
+
+print()
+print()
+print()
+print()
+print()
+print()
+logger.info("client sync phase 3")
+clientSyncFromCollector(
+    workspaceDir=join(HERE,"test-folders/workspace"),
+    videosDir=join(HERE,"test-folders/client/vids"),
+    anilogFile=join(HERE,"test-folders/client/client.log")
 )

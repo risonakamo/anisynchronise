@@ -39,6 +39,25 @@ def anilogAsFilenames(anilog:Anilog)->list[str]:
         for item in anilog
     ]
 
+def resetSeperator(anilogFile:str)->None:
+    """given path to an anilog file, edit to remove all seperators, and place one at the top
+    of the file"""
+
+    newtext:str="---\n"
+
+    # loop through file and take every line except for seperator lines
+    with open(anilogFile,"r") as rfile:
+        for line in rfile:
+            line:str
+
+            if matchSeperator(line):
+                continue
+
+            newtext+=line
+
+    with open(anilogFile,"w") as wfile:
+        wfile.write(newtext)
+
 
 
 
@@ -95,15 +114,14 @@ def readAnilog(anilogFile:str,stopAtSeperator:bool=False)->Anilog:
     log:Anilog=[]
 
     with open(anilogFile,"r") as rfile:
-        while True:
-            line:str=rfile.readline()
+        for line in rfile:
+            line:str
 
             if stopAtSeperator and matchSeperator(line):
                 logger.debug("finish reading anilog to seperator: {} items",len(log))
                 return log
 
-            if not line:
-                logger.debug("read whole anilog file")
-                return log
-
             log.append(parseAnilogLine(line))
+
+    logger.debug("read whole anilog file")
+    return log
