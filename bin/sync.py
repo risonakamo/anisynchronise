@@ -89,6 +89,7 @@ def main():
         # ------- phase 3 sync --------
         else:
             printr("[cyan]Performing Client Sync Phase 3: Sync from Collector[/cyan]")
+            printr()
 
             clientSyncFromCollector(
                 workspaceDir=config.workspaceDir,

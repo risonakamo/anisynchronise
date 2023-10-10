@@ -43,8 +43,6 @@ def clientSyncFromCollector(
 
     see client-sync.md, phase 3 client sync for operations performed"""
 
-    printr("[magenta]Client Sync Phase 3[/magenta]")
-
     # confirming videos are available
     videosAvailFile:str=join(workspaceDir,"videos-available.txt")
     if not isfile(videosAvailFile):
