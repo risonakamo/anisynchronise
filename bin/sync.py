@@ -7,6 +7,7 @@ from rich import print as printr
 from sys import stdout
 
 from anisynchronise.client_sync import clientSyncFromCollector, genClientSyncToFile
+from anisynchronise.collector_sync import doCollectorSync
 from anisynchronise.config import loadConfig
 
 from anisynchronise.types.config_types import ClientConfig, CollectorConfig
@@ -51,6 +52,15 @@ def main():
             printr("[bold red]ERROR: workspace vids dir could not be ensured[/bold red]")
             printr(f"[red]tried to make workspace vids dir at: [yellow]{workspaceVidsDir}[/yellow]")
             exit(1)
+
+        doCollectorSync(
+            collectorVidsDir=config.collectorVideosDir,
+            stockDir=config.stockVideosDir,
+            deleteDir=config.videosDeleteDir,
+            workspaceDir=config.workspaceDir,
+            collectorAnilogFile=config.collectorAnilogFile,
+            clientSyncJson=join(config.workspaceDir,"client-sync.json")
+        )
 
 
 

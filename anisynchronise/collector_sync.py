@@ -1,6 +1,6 @@
 # top level of collector sync. contains main function for doing collector sync
 
-from os import listdir
+from os import listdir,remove
 from os.path import join
 from loguru import logger
 from rich import print as printr
@@ -68,6 +68,10 @@ def doCollectorSync(
     # 6. create drop ready file
     with open(join(workspaceDir,"videos-available.txt"),"w"):
         pass
+
+    # 7. remove client-sync json so sync cannot be done again accidentally
+    printr("removing client sync json...")
+    remove(clientSyncJson)
 
     printr()
     printr("[bold blue]collector sync successful[/bold blue]")
