@@ -1,9 +1,9 @@
 systemType: client
 
 # !! IMPORTANT: this folder will be mirror copied. make sure it does not contain important files!!
-clientVideosDir: somewhere
-videosDeleteDir: somewhere
+clientVideosDir: D:\videos\vids
+videosDeleteDir: D:\videos\delete
 
-workspaceDir: somewhere
+workspaceDir: E:\anisync-transfer
 
-clientAnilogFile: somewhere
+clientAnilogFile: D:\videos\vids.log

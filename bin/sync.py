@@ -4,6 +4,7 @@ from os import makedirs
 from os.path import dirname,realpath,join,isdir,isfile
 from loguru import logger
 from rich import print as printr
+from sys import stdout
 
 from anisynchronise.client_sync import clientSyncFromCollector, genClientSyncToFile
 from anisynchronise.config import loadConfig
@@ -13,6 +14,9 @@ from anisynchronise.types.config_types import ClientConfig, CollectorConfig
 @logger.catch()
 def main():
     HERE:str=dirname(realpath(__file__))
+
+    logger.remove()
+    logger.add(stdout,level="INFO")
 
     configFilePath:str=join(HERE,"../config/config.yml")
     if not isfile(configFilePath):
