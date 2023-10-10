@@ -2,3 +2,4 @@ __pycache__
 test/output
 pyenv.txt
 test/folders-test/test-folders
+config/config.yml

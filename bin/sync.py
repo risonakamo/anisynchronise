@@ -2,35 +2,70 @@
 
 from os import makedirs
 from os.path import dirname,realpath,join,isdir,isfile
+from loguru import logger
 from rich import print as printr
 
+from anisynchronise.client_sync import clientSyncFromCollector, genClientSyncToFile
 from anisynchronise.config import loadConfig
+
 from anisynchronise.types.config_types import ClientConfig, CollectorConfig
 
-HERE:str=dirname(realpath(__file__))
+@logger.catch()
+def main():
+    HERE:str=dirname(realpath(__file__))
 
-config:CollectorConfig|ClientConfig=loadConfig(join(HERE,"../config/config.yml"))
+    config:CollectorConfig|ClientConfig=loadConfig(join(HERE,"../config/config.yml"))
 
-if config.systemType=="collector":
-    printr("[magenta]--- System Type: [cyan]Collector[/cyan] ---[/magenta]")
+    # ------ collector action -------
+    if config.systemType=="collector":
+        printr("[magenta]--- System Type: [cyan]Collector[/cyan] ---[/magenta]")
 
-    printr("[yellow]Checking for Client Sync Json...[/yellow]")
-    clientSyncJsonPath:str=join(config.workspaceDir,"client-sync.json")
-    if not isfile(clientSyncJsonPath):
-        printr(
-            f"[bold red]ERROR: Could not find client sync json at: "
-            +f"[yellow]{clientSyncJsonPath}[/yellow][/bold red]"
-        )
-        exit(1)
+        printr("[yellow]Checking for Client Sync Json...[/yellow]")
+        clientSyncJsonPath:str=join(config.workspaceDir,"client-sync.json")
+        if not isfile(clientSyncJsonPath):
+            printr(
+                f"[bold red]ERROR: Could not find client sync json at: "
+                +f"[yellow]{clientSyncJsonPath}[/yellow][/bold red]"
+            )
+            exit(1)
 
-    printr()
-    printr("[yellow]Confirming able to access workspace dump directory...[/yellow]")
-    workspaceVidsDir:str=join(config.workspaceDir,"videos")
-    makedirs(workspaceVidsDir,exist_ok=True)
-    if not isdir(workspaceVidsDir):
-        printr("[bold red]ERROR: workspace vids dir could not be ensured[/bold red]")
-        printr(f"[red]tried to make workspace vids dir at: [yellow]{workspaceVidsDir}[/yellow]")
-        exit(1)
+        printr()
+        printr("[yellow]Confirming able to access workspace dump directory...[/yellow]")
+        workspaceVidsDir:str=join(config.workspaceDir,"videos")
+        makedirs(workspaceVidsDir,exist_ok=True)
+        if not isdir(workspaceVidsDir):
+            printr("[bold red]ERROR: workspace vids dir could not be ensured[/bold red]")
+            printr(f"[red]tried to make workspace vids dir at: [yellow]{workspaceVidsDir}[/yellow]")
+            exit(1)
 
-elif config.systemType=="client":
-    pass
+
+
+    # ------- client actions --------
+    elif config.systemType=="client":
+        printr("[magenta]--- System Type: [cyan]Client[/cyan] ---[/magenta]")
+
+        # ------- phase 1 sync --------
+        if not isfile(join(config.workspaceDir,"videos-available.txt")):
+            printr("[cyan]Performing Client Sync Phase 1: Writing Client Json[/cyan]")
+            printr()
+
+            genClientSyncToFile(
+                vidDir=config.clientVideosDir,
+                anilogFile=config.clientAnilogFile,
+                outputFile=join(config.workspaceDir,"client-sync.json")
+            )
+
+
+
+        # ------- phase 3 sync --------
+        else:
+            printr("[cyan]Performing Client Sync Phase 3: Sync from Collector[/cyan]")
+
+            clientSyncFromCollector(
+                workspaceDir=config.workspaceDir,
+                videosDir=config.clientVideosDir,
+                anilogFile=config.clientAnilogFile
+            )
+
+if __name__=="__main__":
+    main()
