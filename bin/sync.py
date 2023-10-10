@@ -14,11 +14,21 @@ from anisynchronise.types.config_types import ClientConfig, CollectorConfig
 def main():
     HERE:str=dirname(realpath(__file__))
 
+    configFilePath:str=join(HERE,"../config/config.yml")
+    if not isfile(configFilePath):
+        printr("[bold red]ERROR: Could not find config.yml. Check readme.md for setup instructions")
+        exit(1)
+
     config:CollectorConfig|ClientConfig=loadConfig(join(HERE,"../config/config.yml"))
 
     # ------ collector action -------
     if config.systemType=="collector":
         printr("[magenta]--- System Type: [cyan]Collector[/cyan] ---[/magenta]")
+
+        if not isdir(config.workspaceDir):
+            printr("[bold red]ERROR: Failed to access workspace dir")
+            printr(f"Expected workspace dir at: {config.workspaceDir}")
+            exit(1)
 
         printr("[yellow]Checking for Client Sync Json...[/yellow]")
         clientSyncJsonPath:str=join(config.workspaceDir,"client-sync.json")
@@ -43,6 +53,11 @@ def main():
     # ------- client actions --------
     elif config.systemType=="client":
         printr("[magenta]--- System Type: [cyan]Client[/cyan] ---[/magenta]")
+
+        if not isdir(config.workspaceDir):
+            printr("[bold red]ERROR: Failed to access workspace dir")
+            printr(f"Expected workspace dir at: {config.workspaceDir}")
+            exit(1)
 
         # ------- phase 1 sync --------
         if not isfile(join(config.workspaceDir,"videos-available.txt")):
